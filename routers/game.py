@@ -13,6 +13,11 @@ async def websocket_endpoint(websocket: WebSocket):
     
     # 현재 참가자 정보 브로드캐스트
     await broadcast({"players": len(game_manager.players), "game_started": game_started}, game_manager.players)
+
+    # 게임 시작 시 모든 플레이어에게 단어 전송
+    if game_started:
+        for player in game_manager.players:
+            await player.send_json(game_manager.get_word(player))
     
     try:
         while True:

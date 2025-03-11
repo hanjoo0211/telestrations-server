@@ -3,6 +3,7 @@ class GameManager:
         self.players = []  # 참가자 목록
         self.max_players = 4  # 최대 참가자 수
         self.game_started = False  # 게임 시작 여부
+        self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
 
     def add_player(self, websocket):
         """플레이어 추가"""
@@ -27,3 +28,11 @@ class GameManager:
     def get_game_status(self):
         """현재 게임 상태 반환"""
         return {"players": len(self.players), "game_started": self.game_started}
+
+    def get_word(self, websocket):
+        """단어 전송"""
+        if self.game_started and websocket in self.players:
+            player_index = self.players.index(websocket)
+            word = self.words[player_index]
+            return {"word": word}
+        return {"word": ""}
