@@ -5,7 +5,7 @@ from services.game_manager import GameManager
 router = APIRouter()
 game_manager = GameManager()
 
-@router.websocket("/game/ready")
+@router.websocket("/game")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     
