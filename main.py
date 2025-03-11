@@ -1,7 +1,17 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 from typing import List
 
 app = FastAPI()
+
+class CSPMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Content-Security-Policy"] = "default-src 'self'; connect-src 'self' ws://hzzz.site:8000 ws://localhost:8000"
+        return response
+
+app.add_middleware(CSPMiddleware)
 
 # 현재 연결된 WebSocket 클라이언트 목록
 clients: List[WebSocket] = []
