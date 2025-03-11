@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import websocket
+from routers import game
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 
@@ -14,7 +14,7 @@ class CSPMiddleware(BaseHTTPMiddleware):
 app.add_middleware(CSPMiddleware)
 
 # WebSocket 라우터 등록
-app.include_router(websocket.router)
+app.include_router(game.router)
 
 # 실행
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
