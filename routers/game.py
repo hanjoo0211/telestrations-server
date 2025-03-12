@@ -51,6 +51,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         if game_manager.game_round < game_manager.max_players:
                             game_manager.next_round()
                         else: # 게임 종료 시 전체 사진 전송
+                            print(f"Game End: {game_manager.images}")
                             await broadcast({"type": "game_end", "images": game_manager.images}, game_manager.players)
                             # game_manager.game_started = False
                             # game_manager.game_round = 0

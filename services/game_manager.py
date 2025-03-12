@@ -17,6 +17,8 @@ class GameManager:
         if websocket not in self.players and len(self.players) < self.max_players:
             self.players.append(websocket)
             self.ready_status.append(False)
+        
+        print(f"Player Added: {websocket}, Ready: {self.ready_status}")
 
     def remove_player(self, websocket):
         """플레이어 제거"""
@@ -30,6 +32,8 @@ class GameManager:
         if len(self.players) < self.max_players:
             self.game_started = False
 
+        print(f"Player Removed: {websocket}, Ready: {self.ready_status}")
+
     def get_game_status(self):
         """현재 게임 상태 반환"""
         return {"players": len(self.players), "game_started": self.game_started}
@@ -38,7 +42,8 @@ class GameManager:
         """랜덤 단어 설정"""
         with open("resources/words.txt", "r") as f:
             words = f.read().split(",")
-        self.words = random.sample(words, self.max_players)
+        self.words = random.sample(words, self.max_players);
+        print(f"Random Words: {self.words}")
         return self.words
 
     def get_word(self, websocket):
@@ -55,6 +60,7 @@ class GameManager:
             for i in range(self.max_players):
                 if len(self.images[i]) < round:
                     return False
+            print(f"All players submitted images for round {round}")
             return True
         return False
 
