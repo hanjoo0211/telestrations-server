@@ -1,8 +1,10 @@
 import random
+from datetime import datetime
 
 
 class GameManager:
     def __init__(self):
+        self.game_id = None
         self.max_players = 4  # 최대 참가자 수
         self.players = []  # 참가자 목록
         self.ready_status = []  # 참가자 준비 상태
@@ -37,6 +39,15 @@ class GameManager:
     def get_game_status(self):
         """현재 게임 상태 반환"""
         return {"players": len(self.players), "game_started": self.game_started}
+
+    def start_game(self):
+        """게임 시작"""
+        if all(self.ready_status) and len(self.players) == self.max_players:
+            self.game_started = True
+            self.game_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+            print(f"Game Started: {self.game_id}")
+            return True
+        return False
     
     def set_random_word(self):
         """랜덤 단어 설정"""

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from services.broadcast import broadcast
 from services.game_manager import GameManager
+from services.image_handler import save_image
 
 router = APIRouter()
 game_manager = GameManager()
@@ -26,7 +27,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 game_manager.ready_status[player_index] = True
                 # 모든 플레이어가 준비 완료
                 if all(game_manager.ready_status) and len(game_manager.players) == game_manager.max_players: # "4명"이 모두 준비 완료
-                    game_manager.game_started = True
+                    game_manager.start_game()
                     await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)
                     game_manager.set_random_word()
                     for player in game_manager.players:
@@ -40,6 +41,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 if data.get("type") == "image":
                     player_index = game_manager.players.index(websocket)
                     game_manager.images[player_index].append(data["data"])
+
+                    # 이미지 저장
+                    save_image(data["data"], player_index, game_manager.game_round, game_manager.game_id)
                     
                     # 모든 플레이어가 이미지를 제출했는지 확인
                     if game_manager.check_image(game_manager.game_round):
@@ -53,9 +57,6 @@ async def websocket_endpoint(websocket: WebSocket):
                         else: # 게임 종료 시 전체 사진 전송
                             print(f"Game End: {game_manager.images}")
                             await broadcast({"type": "game_end", "images": game_manager.images}, game_manager.players)
-                            # game_manager.game_started = False
-                            # game_manager.game_round = 0
-                            # game_manager.images = [[], [], [], []]
 
             # await broadcast(data, game_manager.players)
             print(f"Server received from {websocket}: {data}")
