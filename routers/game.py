@@ -24,14 +24,16 @@ async def websocket_endpoint(websocket: WebSocket):
             if data.get("action") == "start":
                 player_index = game_manager.players.index(websocket)
                 game_manager.ready_status[player_index] = True
-                await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)
                 # 모든 플레이어가 준비 완료
-                if all(game_manager.ready_status):
+                if all(game_manager.ready_status) and len(game_manager.players) == game_manager.max_players: # "4명"이 모두 준비 완료
                     game_manager.game_started = True
+                    await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)
                     game_manager.set_random_word()
                     for player in game_manager.players:
                         await player.send_json(game_manager.get_word(player))
                     game_manager.next_round()
+                else:
+                    await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)
 
             if game_manager.game_started:
                 # 이미지 수신
