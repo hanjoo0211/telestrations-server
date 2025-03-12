@@ -1,3 +1,6 @@
+import random
+
+
 class GameManager:
     def __init__(self):
         self.players = []  # 참가자 목록
@@ -32,6 +35,13 @@ class GameManager:
     def get_game_status(self):
         """현재 게임 상태 반환"""
         return {"players": len(self.players), "game_started": self.game_started}
+    
+    def set_random_word(self):
+        """랜덤 단어 설정"""
+        with open("resources/words.txt", "r") as f:
+            words = f.read().split(",")
+        self.words = random.sample(words, self.max_players)
+        return self.words
 
     def get_word(self, websocket):
         """플레이어별 단어 반환"""

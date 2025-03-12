@@ -16,6 +16,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
     # 게임 시작 시 모든 플레이어에게 단어 전송
     if game_started:
+        game_manager.set_random_word()
         for player in game_manager.players:
             await player.send_json(game_manager.get_word(player))
     
