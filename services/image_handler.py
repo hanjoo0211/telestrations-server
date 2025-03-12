@@ -3,6 +3,7 @@ import os
 from services.game_manager import GameManager
 
 IMAGE_SAVE_FOLDER = "saved_images"
+os.makedirs(IMAGE_SAVE_FOLDER, exist_ok=True)
 
 def save_image(base64_string: str, player_index: int, round_number: int, game_id: str) -> str:
     """base64 데이터를 디코딩하여 PNG 파일로 저장"""
