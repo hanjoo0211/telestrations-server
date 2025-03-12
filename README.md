@@ -32,10 +32,14 @@ socket.onclose = () => {
 ```
 socket.close();
 ```
+```
+socket.send(JSON.stringify({action: "start"}));
+```
 
 ### 현재까지 구현
-1. browser console에 상단 client example 입력 시 게임 접속 / 준비 -> `{"players": int, "game_started": bool}` 반환
-2. 4명 접속 시 모든 client에게 `{"word": str}` 반환
-3. 모든 client가 `{"type": "image", "data": "base64imagestr"}` 보내면 다음 라운드로 넘어감
-4. 다음 라운드로 넘어가면 각 client에게 `{"image": "base64imagestr"}` 반환
-5. 4라운드가 종료되면 모든 client에게 `{"type": "game_end", "images": [모든 이미지 array]}` 반환
+1. browser console에 상단 client example 입력 시 게임 접속 / 준비 -> `{"players": int, "ready": List[bool], "game_started": bool}` 반환
+2. 각 client가 {"action": "start"} 보낼 시 ready 상태 True로 변환 후 `{"players": int, "ready": List[bool], "game_started": bool}` 반환
+3. 4명 준비 완료 시 모든 client에게 `{"word": str}` 반환
+4. 모든 client가 `{"type": "image", "data": "base64imagestr"}` 보내면 다음 라운드로 넘어감
+5. 다음 라운드로 넘어가면 각 client에게 `{"image": "base64imagestr"}` 반환
+6. 4라운드가 종료되면 모든 client에게 `{"type": "game_end", "images": [모든 이미지 array]}` 반환

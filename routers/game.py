@@ -9,25 +9,33 @@ game_manager = GameManager()
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     
-    game_started = game_manager.add_player(websocket)
+    game_manager.add_player(websocket)
+    game_started = game_manager.game_started
     
     # 현재 참가자 정보 브로드캐스트
-    await broadcast({"players": len(game_manager.players), "game_started": game_started}, game_manager.players)
-
-    # 게임 시작 시 모든 플레이어에게 단어 전송
-    if game_started:
-        game_manager.set_random_word()
-        for player in game_manager.players:
-            await player.send_json(game_manager.get_word(player))
+    await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_started}, game_manager.players)
     
     try:
         while True:
             # 클라이언트로부터 메시지 수신
             data = await websocket.receive_json()
 
+            # 클라이언트가 게임 준비를 보낸 경우
+            if data.get("action") == "start":
+                player_index = game_manager.players.index(websocket)
+                game_manager.ready_status[player_index] = True
+                await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)
+                # 모든 플레이어가 준비 완료
+                if all(game_manager.ready_status):
+                    game_manager.game_started = True
+                    game_manager.set_random_word()
+                    for player in game_manager.players:
+                        await player.send_json(game_manager.get_word(player))
+                    game_manager.next_round()
+
             if game_manager.game_started:
                 # 이미지 수신
-                if data["type"] == "image":
+                if data.get("type") == "image":
                     player_index = game_manager.players.index(websocket)
                     game_manager.images[player_index].append(data["data"])
                     
@@ -46,7 +54,8 @@ async def websocket_endpoint(websocket: WebSocket):
                             # game_manager.game_round = 0
                             # game_manager.images = [[], [], [], []]
 
-            await broadcast(data, game_manager.players)
+            # await broadcast(data, game_manager.players)
+            print(f"Server received from {websocket}: {data}")
     except WebSocketDisconnect:
         # 클라이언트 연결 종료 시 플레이어 제거
         game_manager.remove_player(websocket)

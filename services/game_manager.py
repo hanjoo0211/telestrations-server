@@ -3,8 +3,9 @@ import random
 
 class GameManager:
     def __init__(self):
-        self.players = []  # 참가자 목록
         self.max_players = 4  # 최대 참가자 수
+        self.players = []  # 참가자 목록
+        self.ready_status = []  # 참가자 준비 상태
         self.game_started = False  # 게임 시작 여부
         self.game_round = 0 # 게임 라운드
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
@@ -15,16 +16,13 @@ class GameManager:
         """플레이어 추가"""
         if websocket not in self.players and len(self.players) < self.max_players:
             self.players.append(websocket)
-
-        # 4명이 되면 게임 시작
-        if len(self.players) == self.max_players:
-            self.game_started = True
-            self.next_round()
-            return True  # 게임이 시작되었음을 반환
-        return False  # 아직 시작 전
+            self.ready_status.append(False)
 
     def remove_player(self, websocket):
         """플레이어 제거"""
+        player_index = self.players.index(websocket)
+        self.ready_status.pop(player_index)
+
         if websocket in self.players:
             self.players.remove(websocket)
 
