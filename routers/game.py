@@ -56,7 +56,12 @@ async def websocket_endpoint(websocket: WebSocket):
                             game_manager.next_round()
                         else: # 게임 종료 시 전체 사진 전송
                             print(f"Game End: {game_manager.images}")
-                            await broadcast({"type": "game_end", "images": game_manager.images}, game_manager.players)
+                            await broadcast({
+                                "type": "game_end",
+                                "images": game_manager.images,
+                                "first_words": game_manager.words,
+                                "result_words": game_manager.result_words
+                                }, game_manager.players)
 
             # await broadcast(data, game_manager.players)
             print(f"Server received from {websocket}: {data}")

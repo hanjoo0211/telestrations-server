@@ -11,6 +11,7 @@ class GameManager:
         self.game_started = False  # 게임 시작 여부
         self.game_round = 0 # 게임 라운드
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
+        self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]  # 결과 단어 목록
         self.images = [[], [], [], []] # 이미지 목록 (플레이어 순서로 index)
 
 
