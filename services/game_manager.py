@@ -12,7 +12,8 @@ class GameManager:
         self.game_round = 0 # 게임 라운드
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
         self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]  # 결과 단어 목록
-        self.images = [[], [], [], []] # 이미지 목록 (플레이어 순서로 index)
+        self.images = [[], [], [], []] # 이미지 목록 (단어 순서로 index)
+        # self.result_images = [[], [], [], []] # 결과 이미지 목록 (단어 순서로 index)
 
 
     def add_player(self, websocket):
@@ -65,6 +66,16 @@ class GameManager:
             word = self.words[player_index]
             return {"word": word}
         return {"word": ""}
+    
+    def add_image(self, websocket, data):
+        """이미지 저장"""
+        if self.game_started:
+            player_index = self.players.index(websocket)
+            word_index = (player_index + self.game_round - 1) % self.max_players
+            self.images[word_index].append(data)
+            print(f"Image Added: Player {player_index} Word {word_index} Round {self.game_round}")
+            return True
+        return False
 
     def check_image(self, round):
         """라운드 별로 모든 플레이어가 이미지를 제출했는지 확인"""
@@ -85,6 +96,5 @@ class GameManager:
     def next_image(self, websocket):
         """다음 이미지 전송"""
         player_index = self.players.index(websocket)
-        round = self.game_round
-        next_image_index = (player_index + round) % self.max_players
-        return {"image": self.images[next_image_index][round - 1]}
+        next_image_index = (player_index + self.game_round) % self.max_players
+        return {"image": self.images[next_image_index][self.game_round - 1]}

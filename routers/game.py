@@ -20,6 +20,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             # 클라이언트로부터 메시지 수신
             data = await websocket.receive_json()
+            print(f"Server received from {websocket}: {data}")
 
             # 클라이언트가 게임 준비를 보낸 경우
             if data.get("action") == "start":
@@ -39,8 +40,7 @@ async def websocket_endpoint(websocket: WebSocket):
             if game_manager.game_started:
                 # 이미지 수신
                 if data.get("type") == "image":
-                    player_index = game_manager.players.index(websocket)
-                    game_manager.images[player_index].append(data["data"])
+                    game_manager.add_image(websocket, data["data"])
 
                     # 이미지 저장
                     save_image(data["data"], player_index, game_manager.game_round, game_manager.game_id)
@@ -64,7 +64,6 @@ async def websocket_endpoint(websocket: WebSocket):
                                 }, game_manager.players)
 
             # await broadcast(data, game_manager.players)
-            print(f"Server received from {websocket}: {data}")
     except WebSocketDisconnect:
         # 클라이언트 연결 종료 시 플레이어 제거
         game_manager.remove_player(websocket)
