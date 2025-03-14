@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+from .ocr_image_convert import recognize_text
 
 
 class GameManager:
@@ -13,7 +14,6 @@ class GameManager:
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
         self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]  # 결과 단어 목록
         self.images = [[], [], [], []] # 이미지 목록 (단어 순서로 index)
-        # self.result_images = [[], [], [], []] # 결과 이미지 목록 (단어 순서로 index)
 
 
     def add_player(self, websocket):
@@ -73,7 +73,14 @@ class GameManager:
             player_index = self.players.index(websocket)
             word_index = (player_index + self.game_round - 1) % self.max_players
             self.images[word_index].append(data)
-            print(f"Image Added: Player {player_index} Word {word_index} Round {self.game_round}")
+            
+            # OCR 수행하여 결과 업데이트
+            recognized_words = recognize_text(data)
+            if recognized_words:
+                self.result_words[word_index] = "".join(recognized_words)
+
+            print(f"Image Added & OCR Performed: Player {player_index} Word {word_index} Round {self.game_round} Recognized: {self.result_words[word_index]}")
+            
             return True
         return False
 

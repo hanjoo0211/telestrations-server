@@ -20,7 +20,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             # 클라이언트로부터 메시지 수신
             data = await websocket.receive_json()
-            print(f"Server received from {websocket}: {data}")
+            print(f"Server received from {websocket}: {str(data)[:1000]}")
 
             # 클라이언트가 게임 준비를 보낸 경우
             if data.get("action") == "start":
