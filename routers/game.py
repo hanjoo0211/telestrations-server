@@ -47,15 +47,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     
                     # 모든 플레이어가 이미지를 제출했는지 확인
                     if game_manager.check_image(game_manager.game_round):
-                        # 각 플레이어들에게 다음 이미지 전송
-                        for player in game_manager.players:
-                            next_image = game_manager.next_image(player)
-                            await player.send_json(next_image)
                         # 라운드 넘기거나 게임 종료
                         if game_manager.game_round < game_manager.max_players:
+                            # 각 플레이어들에게 다음 이미지 전송
+                            for player in game_manager.players:
+                                next_image = game_manager.next_image(player)
+                                await player.send_json(next_image)
                             game_manager.next_round()
                         else: # 게임 종료 시 전체 사진 전송
-                            print(f"Game End: {game_manager.images}")
+                            print(f"Game End: {game_manager.result_words}")
                             await broadcast({
                                 "type": "game_end",
                                 "images": game_manager.images,

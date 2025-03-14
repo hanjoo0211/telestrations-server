@@ -73,15 +73,18 @@ class GameManager:
             player_index = self.players.index(websocket)
             word_index = (player_index + self.game_round - 1) % self.max_players
             self.images[word_index].append(data)
-            
-            # OCR 수행하여 결과 업데이트
-            recognized_words = recognize_text(data)
-            if recognized_words:
-                self.result_words[word_index] = "".join(recognized_words)
-            else:
-                self.result_words[word_index] = "인식안됨"
 
-            print(f"Image Added & OCR Performed: Player {player_index} Word {word_index} Round {self.game_round} Recognized: {self.result_words[word_index]}")
+            print(f"Image Added: Player {player_index} Word {word_index} Round {self.game_round}")
+            
+            # 4라운드 끝나면 OCR 수행하여 결과 업데이트
+            if self.game_round == self.max_players: # 4라운드 끝
+                recognized_words = recognize_text(data)
+                if recognized_words:
+                    self.result_words[word_index] = "".join(recognized_words)
+                else:
+                    self.result_words[word_index] = "인식안됨"
+
+                print(f"Recognized Words: {self.result_words}")
             
             return True
         return False
