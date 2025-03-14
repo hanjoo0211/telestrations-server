@@ -78,6 +78,8 @@ class GameManager:
             recognized_words = recognize_text(data)
             if recognized_words:
                 self.result_words[word_index] = "".join(recognized_words)
+            else:
+                self.result_words[word_index] = "인식안됨"
 
             print(f"Image Added & OCR Performed: Player {player_index} Word {word_index} Round {self.game_round} Recognized: {self.result_words[word_index]}")
             
