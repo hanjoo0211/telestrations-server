@@ -1,6 +1,7 @@
 import random
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from .ocr_image_convert import recognize_text
+from .threadpool_ocr import threadpool_ocr
 
 
 class GameManager:
@@ -14,6 +15,7 @@ class GameManager:
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
         self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]  # 결과 단어 목록
         self.images = [[], [], [], []] # 이미지 목록 (단어 순서로 index)
+        self.executor = ThreadPoolExecutor()
 
 
     def add_player(self, websocket):
@@ -66,7 +68,7 @@ class GameManager:
             word = self.words[player_index]
             return {"word": word}
         return {"word": ""}
-    
+
     def add_image(self, websocket, data):
         """이미지 저장"""
         if self.game_started:
@@ -77,13 +79,8 @@ class GameManager:
             print(f"Image Added: Player {player_index} Word {word_index} Round {self.game_round}")
             
             # 4라운드 끝나면 OCR 수행하여 결과 업데이트
-            if self.game_round == self.max_players: # 4라운드 끝
-                recognized_words = recognize_text(data)
-                if recognized_words:
-                    self.result_words[word_index] = "".join(recognized_words)
-                else:
-                    self.result_words[word_index] = "인식안됨"
-
+            if self.game_round == self.max_players:
+                self.result_words[word_index] = threadpool_ocr(data, self.executor)
                 print(f"Recognized Words: {self.result_words}")
             
             return True
