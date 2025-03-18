@@ -31,7 +31,7 @@ def preprocess_image(img):
     resized = cv2.resize(gray, (0, 0), fx=RESIZE_FACTOR, fy=RESIZE_FACTOR, interpolation=cv2.INTER_AREA)
 
     # 패딩 추가 (테두리에 여백을 추가하여 글자 왜곡 방지)
-    padded = cv2.copyMakeBorder(resized, 20, 20, 20, 20, cv2.BORDER_CONSTANT, value=255)
+    padded = cv2.copyMakeBorder(resized, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
     
     # 이진화 처리 (배경과 글자 대비를 높임)
     _, thresh = cv2.threshold(padded, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
