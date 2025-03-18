@@ -172,3 +172,6 @@ cython_debug/
 
 # saved images
 saved_images/
+
+# ocr test images
+ocr_test_images/
