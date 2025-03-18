@@ -68,3 +68,8 @@ async def websocket_endpoint(websocket: WebSocket):
         # 클라이언트 연결 종료 시 플레이어 제거
         game_manager.remove_player(websocket)
         await broadcast({"players": len(game_manager.players), "game_started": game_manager.game_started}, game_manager.players)
+
+        # 게임 중 참가자가 줄어들면 다시 대기 상태로 변경
+        if game_manager.game_started and len(game_manager.players) < game_manager.max_players:
+            game_manager.reset_game()
+            await broadcast({"players": len(game_manager.players), "ready": game_manager.ready_status, "game_started": game_manager.game_started}, game_manager.players)

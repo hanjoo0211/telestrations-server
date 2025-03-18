@@ -34,10 +34,6 @@ class GameManager:
         if websocket in self.players:
             self.players.remove(websocket)
 
-        # 게임 중 참가자가 줄어들면 다시 대기 상태로 변경
-        if len(self.players) < self.max_players:
-            self.game_started = False
-
         print(f"Player Removed: {websocket}, Ready: {self.ready_status}")
 
     def get_game_status(self):
@@ -107,3 +103,17 @@ class GameManager:
         player_index = self.players.index(websocket)
         next_image_index = (player_index + self.game_round) % self.max_players
         return {"image": self.images[next_image_index][self.game_round - 1]}
+
+    # 게임 초기화
+    def reset_game(self):
+        self.game_id = None
+        self.players = []
+        self.ready_status = []
+        self.game_started = False
+        self.game_round = 0
+        self.words = ["임승섭", "채지헌", "최건호", "김한주"]
+        self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]
+        self.images = [[], [], [], []]
+        self.executor = ThreadPoolExecutor()
+        print("Game Reset")
+        return True
