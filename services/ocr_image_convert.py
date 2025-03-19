@@ -7,20 +7,22 @@ from io import BytesIO
 from typing import List
 from PIL import Image
 
+USE_CUSTOM_READER = True
+
 # 절대경로 설정
 user_network_directory = os.path.join(os.path.dirname(__file__), "user_network")
 
 # EasyOCR 리더 초기화
-# OCR_reader = easyocr.Reader(['ko', 'en'], gpu=True)
-
-# Custom Reader 설정
-custom_reader = easyocr.Reader(
-    ["ko"],
-    gpu=True,
-    model_storage_directory=user_network_directory,
-    user_network_directory=user_network_directory,
-    recog_network="custom",
-)
+if USE_CUSTOM_READER:
+    reader = easyocr.Reader(
+        ["ko"],
+        gpu=True,
+        model_storage_directory=user_network_directory,
+        user_network_directory=user_network_directory,
+        recog_network="custom", # model_mix_aug_acc74.286.pth
+    )
+else:
+    reader = easyocr.Reader(['ko'], gpu=True)
 
 # resize 크기
 RESIZE_FACTOR = 0.1
@@ -57,7 +59,7 @@ def preprocess_image(img):
 
     # 패딩 추가 (테두리에 여백을 추가하여 글자 왜곡 방지)
     # padded = cv2.copyMakeBorder(resized, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
-    padded = add_padding(resized, padding=10, color=255)
+    padded = add_padding(resized, padding=0, color=255)
 
     # 이진화 처리 (배경과 글자 대비를 높임)
     # _, thresh = cv2.threshold(padded, 150, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -88,8 +90,7 @@ def recognize_text(base64_str) -> List[str]:
     processed_img = preprocess_image(img)
 
     # OCR 실행
-    # result = OCR_reader.readtext(processed_img)
-    result = custom_reader.readtext(processed_img)
+    result = reader.readtext(processed_img)
 
     recognized_words = [
         text for (_bbox, text, _prob) in result
