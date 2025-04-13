@@ -15,7 +15,7 @@ class GameManager:
         self.words = ["임승섭", "채지헌", "최건호", "김한주"]  # 단어 목록
         self.result_words = ["임승섭", "채지헌", "최건호", "김한주"]  # 결과 단어 목록
         self.images = [[], [], [], []] # 이미지 목록 (단어 순서로 index)
-        self.executor = ThreadPoolExecutor()
+        self.executor = ThreadPoolExecutor(max_workers=4)
 
 
     def add_player(self, websocket):
