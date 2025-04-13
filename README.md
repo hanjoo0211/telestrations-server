@@ -1,5 +1,12 @@
 # telestrations-server
 
+![image](https://github.com/user-attachments/assets/7e538cef-167a-4b87-b6a3-f2fba7ce354e)
+
+![image](https://github.com/user-attachments/assets/bcec934b-fab5-4e19-93fb-91f58d74e28b)
+![image](https://github.com/user-attachments/assets/05e9d579-3d37-4c0d-8b77-8efbeca79f09)
+![image](https://github.com/user-attachments/assets/c9e625f0-7fc5-40c6-90d2-fe5f3f0e10ef)
+
+
 ### Requirements
 ```
 python3 -m venv .venv
